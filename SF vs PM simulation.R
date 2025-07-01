@@ -1,6 +1,4 @@
-# SF vs. PM Simulation
-library(rstudioapi)
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#SF vs PM simulation
 library(tidyverse)
 library(MASS)
 library(psych)
@@ -10,99 +8,7 @@ library(doParallel)
 library(parallel)
 library(doRNG)
 library(rlist)
-
-#####################################################################################################################################
-# This first section was used to generate population correlation matrices that serve as the "population truth" for each condition.
-# Each matrix is a item-level correlation matrix generated based on the conditions I specify (item factor loadings, intercorrelations)
-# I ran this once, saved all of the matrices into a RDS object (Population Correlation Matrices.rds), and then the actual simulation parts calls upon the respective matrix
-# That's why this section is commented out
-#####################################################################################################################################
-# Population Correlation Matrix based on Factor Matrices and Factor Correlations (Hong, 1999; Gnambs & Staufenbiel, 2016)
-# P=L %*% C %*% t(L) + D
-# L = k x r factor loading matrix for r factors
-# C = r x r correlation matrix for common factors
-# D = k x k diagonal matrix of unique variances = I - diag(L %*% C %*% t(L))
-
-# Generate population parameters (correlation matrices)
-# set.seed(2020)
-# L <- list(matrix(c(.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,10),
-#                    rep(0,10),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30),
-#                  nrow=20,ncol=2), # two factor
-#           matrix(c(.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,20),
-#                    rep(0,10),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,10),
-#                    rep(0,20),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30),
-#                  nrow=30,ncol=3), # three factor
-#           matrix(c(.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,30),
-#                    rep(0,10),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,20),
-#                    rep(0,20),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,10),
-#                    rep(0,30),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30),
-#                  nrow=40,ncol=4), # four factor
-#           matrix(c(.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,40),
-#                    rep(0,10),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,30),
-#                    rep(0,20),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,20),
-#                    rep(0,30),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30,rep(0,10),
-#                    rep(0,40),.75,.70,.65,.60,.55,.50,.45,.40,.35,.30),
-#                  nrow=50,ncol=5)) # five factor
-# 
-# intercor_m <- seq(0,.7,.1)
-# intercor_sd <- seq(.05,.30,.05)
-# ## Function to generate correlation matrix from a vector
-# vec2symmat <- function(invec, diag = 1, byrow = TRUE) {
-#   Nrow <- ceiling(sqrt(2*length(invec)))
-#   if (!sqrt(length(invec)*2 + Nrow) %% 1 == 0) {
-#     stop("invec is wrong length to create a square symmetrical matrix")
-#   }
-#   mempty <- matrix(0, nrow = Nrow, ncol = Nrow)
-#   mindex <- matrix(sequence(Nrow^2), nrow = Nrow, ncol = Nrow, byrow = byrow)
-#   if (isTRUE(byrow)) {
-#     mempty[mindex[lower.tri(mindex)]] <- invec
-#     mempty[lower.tri(mempty)] <- t(mempty)[lower.tri(t(mempty))]
-#   } else {
-#     mempty[mindex[upper.tri(mindex)]] <- invec
-#     mempty[lower.tri(mempty)] <- t(mempty)[lower.tri(t(mempty))]
-#   }
-#   diag(mempty) <- diag
-#   mempty
-# }
-# ##  Function to generate correlation matrices
-# factor_cormat <- function(m,sd,n){
-#   corvec <- MASS::mvrnorm(n=n,mu=m,Sigma=sd*sd,empirical=T)
-#   corvec <- ifelse(corvec>=1,.99,ifelse(corvec<=-1,-.99,corvec))
-#   vec2symmat(corvec)
-# }
-# C <- c(lapply(intercor_m,vec2symmat), # two factor (uniform)
-#        lapply(intercor_m,function(x) vec2symmat(rep(x,3))), # three factor (uniform)
-#        list.flatten(lapply(intercor_m,function(m) lapply(intercor_sd,function(sd) factor_cormat(m,sd,3)))), # three factor (varied)
-#        lapply(intercor_m,function(x) vec2symmat(rep(x,6))), # four factor (uniform)
-#        list.flatten(lapply(intercor_m,function(m) lapply(intercor_sd,function(sd) factor_cormat(m,sd,6)))), # four factor (varied)
-#        lapply(intercor_m,function(x) vec2symmat(rep(x,10))), # five factor (uniform)
-#        list.flatten(lapply(intercor_m,function(m) lapply(intercor_sd,function(sd) factor_cormat(m,sd,10))))) # five factor (varied)
-# I <- c(rep(list(diag(20)),8), # two factor
-#        rep(list(diag(30)),56), # three factor
-#        rep(list(diag(40)),56), # four factor
-#        rep(list(diag(50)),56)) # five factor
-# R <- c(lapply(C[1:8],function(x) as.matrix(data.frame(L[1]))%*%as.matrix(x)%*%t(as.matrix(data.frame(L[1])))), # two factor
-#        lapply(C[9:64],function(x) as.matrix(data.frame(L[2]))%*%as.matrix(x)%*%t(as.matrix(data.frame(L[2])))), # three factor
-#        lapply(C[65:120],function(x) as.matrix(data.frame(L[3]))%*%as.matrix(x)%*%t(as.matrix(data.frame(L[3])))), # four factor
-#        lapply(C[121:176],function(x) as.matrix(data.frame(L[4]))%*%as.matrix(x)%*%t(as.matrix(data.frame(L[4]))))) # five factor
-# P <- vector(mode="list",length=176)
-# D <- I 
-# for(i in 1:176){
-#   diag(D[i][[1]]) <- diag(R[i][[1]])
-#   D[i][[1]] <- I[i][[1]]-D[i][[1]]
-#   P[i][[1]] <- R[i][[1]]+D[i][[1]]
-# }
-# ## Manually adjust the machine zero negative eigenvalues to ensure all matrices are positive definite (https://www.mathworks.com/matlabcentral/answers/320134-make-sample-covariance-correlation-matrix-positive-definite)
-# for(i in 1:176){
-#   V <- eigen(P[i][[1]])$vectors
-#   eigen <- eigen(P[i][[1]])$values
-#   eigen[eigen<0] <- .0000001
-#   P[i][[1]] <- V%*%diag(eigen,dim(P[i][[1]])[1],dim(P[i][[1]])[2])%*%t(V)
-# }
-# names(P) <- paste0("P",1:176)
-# saveRDS(P,"Population Correlation Matrices.rds")
-
-P <- readRDS("Population Correlation Matrices.rds") # read in the population matrices object
+library(here)
 
 #####################################################################################################################################
 # Actual simulation begins here
@@ -112,6 +18,9 @@ P <- readRDS("Population Correlation Matrices.rds") # read in the population mat
 # I focused on annotating the two-factor section in a little more detail, and the same comments would apply to the other sections
 # This is also how I broke up the jobs for MSI--I had separate scripts for two-, three-, four-, five-construct runs (because the scripts were slightly different and also as kind of a manual parallelization)
 #####################################################################################################################################
+
+P <- readRDS("Population Correlation Matrices.rds") # read in the population matrices object
+set.seed(2020)
 
 # two-factor
 # first create table into which results are going to be written
@@ -151,7 +60,6 @@ SFvsPM_2 <- function(ss){
   
   # Short Form B
   dat_dev_B <- dat_val[sample(c(1:nrow(dat_val)),size=ss$SampleSize/2,replace=F),] # half of the validation sample needs to be used to develop SF
-  # I think the two lines below could be confusing. It looks like I'm further splitting up the development sample into different samples for each construct, but that's not exactly the case
   # I'm essentially extending the same time constraint implied by NMissing for the validation sample to the development sample.
   # e.g., assume NMissing is 5. That means for each of the two factors, participants only have time to complete 5 out of 10 items--in total only have time for 10 items. 
   # this constraint should also apply to the short form development sample such that each participant can only complete 10 items, which means only half of the dev sample can be used for each factor
@@ -193,9 +101,6 @@ SFvsPM_2 <- function(ss){
   }
   )
   dat_val_pm <- do.call(rbind,dat_val_pm)
-  # this is the multiple imputations section that needs to be updated
-  # as you can see, I used default m and maxit values
-  # this might also be where parameter estimates need to be saved out for CODA (re. reviewer comment)
   imp <- mice::mice(dat_val_pm,method="pmm",m=5,maxit=5,seed=iteration) 
   imp1 <- imp
   imp1_long <- mice::complete(imp1,action="long",include=TRUE) ## convert imp object into long format
@@ -215,7 +120,7 @@ for(iteration in 1:100){
   res_Pop_2 <- foreach(i=1:640,.export=c("SFvsPM_2","spreadsheet_2"),.combine=rbind,.options.RNG=iteration) %dorng%
     SFvsPM_2(ss=spreadsheet_2[i,])
   colnames(res_Pop_2)[6:11] <- c("Pop12","Full12","SFA12","SFB12","SFC12","MI12")
-  write_csv(data.frame(res_Pop_2),paste0("Two-Factor Raw Results/i",iteration,".csv"))
+  write_csv(data.frame(res_Pop_2),paste0(here("Two-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -343,7 +248,7 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB23",
                                  "SFC12","SFC13","SFC23",
                                  "MI12","MI13","MI23")
-  write_csv(data.frame(res_Pop_3),paste0("Three-Factor Raw Results/i",iteration,".csv"))
+  write_csv(data.frame(res_Pop_3),paste0(here("Three-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -499,7 +404,7 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB14","SFB23","SFB24","SFB34",
                                  "SFC12","SFC13","SFC14","SFC23","SFC24","SFC34",
                                  "MI12","MI13","MI14","MI23","MI24","MI34")
-  write_csv(data.frame(res_Pop_4),paste0("Four-Factor Raw Results/i",iteration,".csv"))
+  write_csv(data.frame(res_Pop_4),paste0(here("Four-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -688,6 +593,6 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB14","SFB15","SFB23","SFB24","SFB25","SFB34","SFB35","SFB45",
                                  "SFC12","SFC13","SFC14","SFC15","SFC23","SFC24","SFC25","SFC34","SFC35","SFC45",
                                  "MI12","MI13","MI14","MI15","MI23","MI24","MI25","MI34","MI35","MI45")
-  write_csv(data.frame(res_Pop_5),paste0("Five-Factor Raw Results/i",iteration,".csv"))
+  write_csv(data.frame(res_Pop_5),paste0(here("Five-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
