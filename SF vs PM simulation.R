@@ -120,7 +120,7 @@ for(iteration in 1:100){
   res_Pop_2 <- foreach(i=1:640,.export=c("SFvsPM_2","spreadsheet_2"),.combine=rbind,.options.RNG=iteration) %dorng%
     SFvsPM_2(ss=spreadsheet_2[i,])
   colnames(res_Pop_2)[6:11] <- c("Pop12","Full12","SFA12","SFB12","SFC12","MI12")
-  write_csv(data.frame(res_Pop_2),paste0(here("Two-Factor Raw Results","i"),iteration,".csv"))
+  write_csv(data.frame(res_Pop_2),paste0(here("data/Two-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -248,7 +248,7 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB23",
                                  "SFC12","SFC13","SFC23",
                                  "MI12","MI13","MI23")
-  write_csv(data.frame(res_Pop_3),paste0(here("Three-Factor Raw Results","i"),iteration,".csv"))
+  write_csv(data.frame(res_Pop_3),paste0(here("data/Three-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -404,7 +404,7 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB14","SFB23","SFB24","SFB34",
                                  "SFC12","SFC13","SFC14","SFC23","SFC24","SFC34",
                                  "MI12","MI13","MI14","MI23","MI24","MI34")
-  write_csv(data.frame(res_Pop_4),paste0(here("Four-Factor Raw Results","i"),iteration,".csv"))
+  write_csv(data.frame(res_Pop_4),paste0(here("data/Four-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
 
@@ -593,6 +593,6 @@ for(iteration in 1:100){
                                  "SFB12","SFB13","SFB14","SFB15","SFB23","SFB24","SFB25","SFB34","SFB35","SFB45",
                                  "SFC12","SFC13","SFC14","SFC15","SFC23","SFC24","SFC25","SFC34","SFC35","SFC45",
                                  "MI12","MI13","MI14","MI15","MI23","MI24","MI25","MI34","MI35","MI45")
-  write_csv(data.frame(res_Pop_5),paste0(here("Five-Factor Raw Results","i"),iteration,".csv"))
+  write_csv(data.frame(res_Pop_5),paste0(here("data/Five-Factor Raw Results","i"),iteration,".csv"))
 }
 stopCluster(local_cluster)
