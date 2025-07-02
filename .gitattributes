@@ -1,0 +1,4 @@
+data/Five-Factor[[:space:]]Raw[[:space:]]Results/*.csv filter=lfs diff=lfs merge=lfs -text
+data/Four-Factor[[:space:]]Raw[[:space:]]Results/*.csv filter=lfs diff=lfs merge=lfs -text
+data/Three-Factor[[:space:]]Raw[[:space:]]Results/*.csv filter=lfs diff=lfs merge=lfs -text
+data/Two-Factor[[:space:]]Raw[[:space:]]Results/*.csv filter=lfs diff=lfs merge=lfs -text
