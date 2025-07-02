@@ -1,6 +1,6 @@
 library(tidyverse)
 ##take output of simulation2_diagnostics.R to create plots
-#import files i1-iX in Two-Factor Diagnostics
+#import files i1-iX in two-factor Diagnostics
 #each has iterations for 20,40,60,80% missing (all same pop cor-.4 and n-500)
 #desired output:
 #one plot per parameter- AC, psrf, Percent Bias, coverage rate, fmi
@@ -50,7 +50,7 @@ library(tidyverse)
 
 ###CODE BELOW IS HASHED OUT AFTER FIRST RUN THROUGH TO IMPORT AND SAVE COMBINED FILE THAT AVERAGES SIMULATION RESULTS
 ##step 1- read in all files
-#setwd("./Two-Factor Diagnostics/")
+#setwd("./two-factor diagnostics/")
 # temp <- list.files(pattern=".csv")
 # sim_results <- lapply(temp, read_csv) #will this be a list object
 # 
@@ -70,7 +70,7 @@ library(tidyverse)
 #   ))
 # write_rds(sim_averages,"./sim_averages.rds")
 
-sim_averages <- read_rds("./Two-Factor Diagnostics/sim_averages.rds")
+sim_averages <- read_rds("./two-factor diagnostics/sim_averages.rds")
 
 ##step 3 - make plots *Note, my diagnostics code runs more iterations for 60% and 80% so x axis will be shorter for the 20% and 40%
 

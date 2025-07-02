@@ -153,7 +153,7 @@ registerDoParallel(local_cluster)
 for(simulation in 1:100){
   diag_imp_2 <- foreach(i=1:4,.export=c("run_diagnostics","spreadsheet_2_cond","mice.mids"),.combine=rbind,.options.RNG=simulation) %dorng%
   run_diagnostics(ss=spreadsheet_2_cond[i,]) #each row is for a condition
-  write_csv(diag_imp_2,paste0("Two-Factor Diagnostics/i",simulation,".csv"))
+  write_csv(diag_imp_2,paste0("two-factor diagnostics/i",simulation,".csv"))
 }
 stopCluster(local_cluster)
 
