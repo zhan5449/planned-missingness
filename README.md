@@ -27,8 +27,10 @@ regression assumption for the regression models that we ran. The diagnostic plot
 <em>distribution_diagnostics/</em> folder.
 4. [supplementary materials] In an effort to understand the impact of the MICE settings that we used
 for model convergence, we conducted detailed diagnostics for select conditions for manual inspection.
-<em>simulation2_diagnostics.R</em> conducts the diagnostics and saves the output in the <em>two-factor diagnostics/</em> folder. 
-<em>simulatino2_diagnostics_plots.R</em> takes the output and creates diagnostics plots. We also compared the distributions of the imputed values with 
+<em>SF vs PM diagnostics_convergence_performance.R</em> conducts simulations to evaluate model convergence performance.
+The simulation is computationally expensive and therefore is commented out, but we include the output of the simulation
+as <em>Convergence Diagnostic Values.rds</em>. The script computes convergence metrics.
+<em>convergence_diagnostic_plots.R</em> takes the output and creates diagnostics plots. We also compared the distributions of the imputed values with 
 that of the defined populations using <em>SF vs PM diagnostics_imputedvobserved.R</em>, which saves 
 density plots in the <em>density_plots/</em> folder. 
 
