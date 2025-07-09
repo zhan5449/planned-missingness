@@ -101,7 +101,12 @@ SFvsPM_2 <- function(ss){
   }
   )
   dat_val_pm <- do.call(rbind,dat_val_pm)
-  imp <- mice::mice(dat_val_pm,method="pmm",m=5,maxit=5,seed=iteration) 
+  
+  #Define settings for m and maxit in MICE
+  m <- sum(is.na(dat_val_pm)) / (length(dat_val_pm)*nrow(dat_val_pm)) #Count prop. missing
+  m <- m*100 # Set number of imputations to ten times the missingness (e.g., 20 imputations for 20% missingness)
+  if(m >=60) maxit <- 120 else maxit <- 40 # Set number of iterations to 120 for 60% or more missingness; 40 otherwise.
+  imp <- mice::mice(dat_val_pm,method="pmm",m=m,maxit=maxit,seed=iteration)
   imp1 <- imp
   imp1_long <- mice::complete(imp1,action="long",include=TRUE) ## convert imp object into long format
   imp1_long$c1 <- rowMeans(imp1_long[,paste("X",1:10,sep="")]) # create composite scores
@@ -224,7 +229,11 @@ SFvsPM_3 <- function(ss){
   }
   )
   dat_val_pm <- do.call(rbind,dat_val_pm)
-  imp <- mice::mice(dat_val_pm,method="pmm",m=40,maxit=5,seed=iteration)
+  #Define settings for m and maxit in MICE
+  m <- sum(is.na(dat_val_pm)) / (length(dat_val_pm)*nrow(dat_val_pm)) #Count prop. missing
+  m <- m*100 # Set number of imputations to ten times the missingness (e.g., 20 imputations for 20% missingness)
+  if(m >=60) maxit <- 120 else maxit <- 40 # Set number of iterations to 120 for 60% or more missingness; 40 otherwise.
+  imp <- mice::mice(dat_val_pm,method="pmm",m=m,maxit=maxit,seed=iteration)
   imp1 <- imp
   imp1_long <- mice::complete(imp1,action="long",include=TRUE) ## convert imp object into long format
   imp1_long$c1 <- rowMeans(imp1_long[,paste("X",1:10,sep="")]) # create composite scores
@@ -379,7 +388,11 @@ SFvsPM_4 <- function(ss){
   }
   )
   dat_val_pm <- do.call(rbind,dat_val_pm)
-  imp <- mice::mice(dat_val_pm,method="pmm",m=40,maxit=5,seed=iteration)
+  #Define settings for m and maxit in MICE
+  m <- sum(is.na(dat_val_pm)) / (length(dat_val_pm)*nrow(dat_val_pm)) #Count prop. missing
+  m <- m*100 # Set number of imputations to ten times the missingness (e.g., 20 imputations for 20% missingness)
+  if(m >=60) maxit <- 120 else maxit <- 40 # Set number of iterations to 120 for 60% or more missingness; 40 otherwise.
+  imp <- mice::mice(dat_val_pm,method="pmm",m=m,maxit=maxit,seed=iteration)
   imp1 <- imp
   imp1_long <- mice::complete(imp1,action="long",include=TRUE) ## convert imp object into long format
   imp1_long$c1 <- rowMeans(imp1_long[,paste("X",1:10,sep="")]) # create composite scores
@@ -567,7 +580,11 @@ SFvsPM_5 <- function(ss){
   }
   )
   dat_val_pm <- do.call(rbind,dat_val_pm)
-  imp <- mice::mice(dat_val_pm,method="pmm",m=40,maxit=5,seed=iteration)
+  #Define settings for m and maxit in MICE
+  m <- sum(is.na(dat_val_pm)) / (length(dat_val_pm)*nrow(dat_val_pm)) #Count prop. missing
+  m <- m*100 # Set number of imputations to ten times the missingness (e.g., 20 imputations for 20% missingness)
+  if(m >=60) maxit <- 120 else maxit <- 40 # Set number of iterations to 120 for 60% or more missingness; 40 otherwise.
+  imp <- mice::mice(dat_val_pm,method="pmm",m=m,maxit=maxit,seed=iteration)
   imp1 <- imp
   imp1_long <- mice::complete(imp1,action="long",include=TRUE) ## convert imp object into long format
   imp1_long$c1 <- rowMeans(imp1_long[,paste("X",1:10,sep="")]) # create composite scores
